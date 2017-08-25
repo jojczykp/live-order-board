@@ -3,6 +3,8 @@ package com.sbm.live_order_board;
 import org.junit.Test;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.UUID;
 
 import static com.sbm.live_order_board.OrderType.BUY;
 import static com.sbm.live_order_board.OrderType.SELL;
@@ -29,12 +31,17 @@ public class LiveOrderBoardTest {
     public void shouldCancelOrder() {
         Order order1 = anOrder(1, BUY, PRICE, 10);
         Order order2 = anOrder(2, BUY, PRICE, 20);
-        board.registerOrder(order1);
-        board.registerOrder(order2);
+        UUID orderId1 = board.registerOrder(order1);
+        UUID orderId2 = board.registerOrder(order2);
 
-        board.cancelOrder(order1);
+        board.cancelOrder(orderId1);
 
         assertThat(board.getSummary()).containsOnly(aSummaryEntry(BUY, PRICE, order2.getQuantity()));
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void shouldFailCancellingNotExistingOrder() {
+        board.cancelOrder(UUID.randomUUID());
     }
 
     @Test

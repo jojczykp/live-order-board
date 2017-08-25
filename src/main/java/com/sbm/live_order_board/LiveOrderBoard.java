@@ -1,53 +1,57 @@
 package com.sbm.live_order_board;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
+import java.util.NoSuchElementException;
 import java.util.TreeMap;
+import java.util.UUID;
 
-import static java.lang.Math.negateExact;
+import static com.sbm.live_order_board.OrderType.BUY;
+import static com.sbm.live_order_board.OrderType.SELL;
 import static java.util.Comparator.naturalOrder;
 import static java.util.Comparator.reverseOrder;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.summingInt;
+import static java.util.stream.Collectors.toList;
 
 public class LiveOrderBoard {
 
-    // No orders history kept - just actual summary data, updated on every new order.
-    // Two independent sections present (one for each type), since there is no merging/netting between different types.
-    private final SortedMap<OrderType, SortedMap<Integer, Integer>> summary;
+    private final Map<UUID, Order> orders = new HashMap<>();
 
-    public LiveOrderBoard() {
-        summary = new TreeMap<>(naturalOrder());
-        summary.put(OrderType.SELL, new TreeMap<>(naturalOrder()));
-        summary.put(OrderType.BUY, new TreeMap<>(reverseOrder()));
+    public UUID registerOrder(Order order) {
+        UUID id = UUID.randomUUID();
+        orders.put(id, order);
+
+        return id;
     }
 
-    public void registerOrder(Order order) {
-        addQuantity(summary.get(order.getType()), order.getPrice(), order.getQuantity());
-    }
-
-    // We neither store order nor order id, so full object required for cancellation
-    public void cancelOrder(Order order) {
-        addQuantity(summary.get(order.getType()), order.getPrice(), negateExact(order.getQuantity()));
-    }
-
-    private void addQuantity(Map<Integer, Integer> summarySection, Integer price, Integer quantity) {
-        summarySection.compute(price, (p, q) -> quantity + zeroIfNull(q));
-    }
-
-    private int zeroIfNull(Integer value) {
-        return value == null ? 0 : value;
+    public void cancelOrder(UUID id) {
+        if (orders.remove(id) == null) {
+            throw new NoSuchElementException("No Order with id " + id);
+        }
     }
 
     public List<SummaryEntry> getSummary() {
         List<SummaryEntry> result = new ArrayList<>();
 
-        summary.forEach((type, section) ->
-                section.forEach((price, quantity) ->
-                        result.add(new SummaryEntry(type, price, quantity))
-                )
-        );
+        result.addAll(createSummarySection(SELL, naturalOrder()));
+        result.addAll(createSummarySection(BUY, reverseOrder()));
 
         return result;
+    }
+
+    private List<SummaryEntry> createSummarySection(OrderType type, Comparator<Integer> orderingComparator) {
+        return orders.values().stream()
+                .filter(o -> o.getType() == type)
+                .collect(groupingBy(
+                        Order::getPrice,
+                        () -> new TreeMap<>(orderingComparator),
+                        summingInt(Order::getQuantity)))
+                .entrySet().stream()
+                .map(e -> new SummaryEntry(type, e.getKey(), e.getValue()))
+                .collect(toList());
     }
 }
