@@ -17,12 +17,14 @@ Pawel Jojczyk
   getter. Price for it is performance (_O(N)_ instead of _O(1)_ in getter).
 
 - _Summary_ state is kept sorted. That makes registering of _Order_ a little bit slower: (_O(log(N))_ instead of _O(1)_), but
-  generating a copy to be returned by getter faster (O(N) instead O(Nlog(N))).
+  generating a copy to be returned by getter faster (_O(N)_ instead _O(Nlog(N))_).
   
 - TDD/BDD (given/when/then) for testing.
 
 - Self-commenting code (mostly).
 
-- _KISS_, _YAGNI_ (no overengineering; i.e. no factories, interfaces introduces since problem is very simple :) )
+- [https://en.wikipedia.org/wiki/KISS_principle](KISS),
+  [https://martinfowler.com/bliki/Yagni.html](YAGNI)
+  (no overengineering; i.e. no factories, interfaces introduces since problem is very simple :) )
 
 - Standard Maven project structure.
