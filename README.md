@@ -7,22 +7,22 @@ Pawel Jojczyk
 
 ## Comments
 
-- Requirement about different Summary ordering for BUYs and SELLs suggests that we have two independent status sections,
+- Requirement about different _Summary_ ordering for BUYs and SELLs suggests that we have two independent status sections,
   with no price merging between them.
 
-- There is no requirement to present collection of original Orders, so for better performance I keep actual Summary
-  state only, updating it on every incoming Order. This also limits memory consumption.
+- There is no requirement to present collection of original _Orders_, so for better performance I keep actual _Summary_
+  state only, updating it on every incoming _Order_. This also limits memory consumption.
   
-- To avoid Summary state modifications by code other than LiveOrderBoard, copy of it (transforming to list) is made in
-  getter.
+- To avoid _Summary_ state modifications by code other than _LiveOrderBoard_, copy of it (transforming to list) is made in
+  getter. Price for it is performance (_O(N)_ instead of _O(1)_ in getter).
 
-- Summary state is kept sorted. That makes registering of Order a little bit slower: (O(log(N)) instead of O(N)), but
+- _Summary_ state is kept sorted. That makes registering of _Order_ a little bit slower: (_O(log(N))_ instead of _O(1)_), but
   generating a copy to be returned by getter faster (O(N) instead O(Nlog(N))).
   
 - TDD/BDD (given/when/then) for testing.
 
 - Self-commenting code (mostly).
 
-- KISS, YAGNI (no overengineering; i.e. no factories, interfaces introduces since problem is very simple :) )
+- _KISS_, _YAGNI_ (no overengineering; i.e. no factories, interfaces introduces since problem is very simple :) )
 
 - Standard Maven project structure.
