@@ -23,8 +23,8 @@ Pawel Jojczyk
 
 - Self-commenting code (mostly).
 
-- [https://en.wikipedia.org/wiki/KISS_principle](KISS),
-  [https://martinfowler.com/bliki/Yagni.html](YAGNI)
+- [KISS](https://en.wikipedia.org/wiki/KISS_principle),
+  [YAGNI](https://martinfowler.com/bliki/Yagni.html)
   (no overengineering; i.e. no factories, interfaces introduces since problem is very simple :) )
 
 - Standard Maven project structure.
