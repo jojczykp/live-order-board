@@ -13,7 +13,7 @@ import static java.util.Comparator.reverseOrder;
 public class LiveOrderBoard {
 
     // No orders history kept - just actual summary data, updated on every new order.
-    // Two independent sections present (one for each type), since there is no merging between different types.
+    // Two independent sections present (one for each type), since there is no merging/netting between different types.
     private final SortedMap<OrderType, SortedMap<Integer, Integer>> summary;
 
     public LiveOrderBoard() {
@@ -26,6 +26,7 @@ public class LiveOrderBoard {
         addQuantity(summary.get(order.getType()), order.getPrice(), order.getQuantity());
     }
 
+    // We neither store order nor order id, so full object required for cancellation
     public void cancelOrder(Order order) {
         addQuantity(summary.get(order.getType()), order.getPrice(), negateExact(order.getQuantity()));
     }
