@@ -11,7 +11,8 @@ Pawel Jojczyk
   with no price merging between them.
 
 - There is no requirement to present collection of original _Orders_, so for better performance I keep actual _Summary_
-  state only, updating it on every incoming _Order_. This also limits memory consumption.
+  state only, updating it on every incoming _Order_. This also limits memory consumption. Some disadvantage of this
+  solution however is that we don't have _OrderId_, so to cancel, same or equal _Order_ object must be used.
   
 - To avoid _Summary_ state modifications by code other than _LiveOrderBoard_, copy of it (transforming to list) is made in
   getter. Price for it is performance (_O(N)_ instead of _O(1)_ in getter).
